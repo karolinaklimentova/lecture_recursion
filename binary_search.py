@@ -21,35 +21,42 @@ def read_data(file_name, key="ordered_numbers"):
     return seqs[key]
 
 
-def binary_search(seq, number):
+def recursive_binary_search(seq, number, left, right):
     """
-    Function performs binary search on !!ordered!! sequence and stores position of match if found.
-    :param seq: (list): list of numbers
-    :param number: (int): number to match within sequence
-    :return: (int, None): index of match if found, None otherwise
+    Recursive binary search.
+    :param seq: (list), ordered list of numbers
+    :param number: (int), number to search for
+    :param left: (int), index of the left boundary of the search interval
+    :param right: (int), index of the right boundary of the search interval
+    :return: (int), index of the found number, or None if not found
     """
-    left, right = (0, len(seq) - 1)
+    if left <= right:
+        mid = (left + right) // 2
 
-    while left <= right:
-        middle = (right + left) // 2
-
-        if number < seq[middle]:
-            right = middle - 1
-        elif number > seq[middle]:
-            left = middle + 1
+        if seq[mid] == number:
+            return mid
+        elif seq[mid] < number:
+            return recursive_binary_search(seq, number, mid + 1, right)
         else:
-            return middle
-    return None
+            return recursive_binary_search(seq, number, left, mid - 1)
+    else:
+        return None
 
 
 def main(file_name, number):
     sequence = read_data(file_name=file_name, key="ordered_numbers")
 
-    # iterative binary search
-    binary_search(sequence, number=number)
+    # Recursive binary search
+    index = recursive_binary_search(sequence, number, 0, len(sequence) - 1)
+
+    if index is not None:
+        print(f"Number {number} found at index {index}.")
+    else:
+        print(f"Number {number} not found in the sequence.")
 
 
 if __name__ == "__main__":
     my_file = "sequential.json"
     my_number = 90
     main(my_file, my_number)
+
